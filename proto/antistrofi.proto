@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option go_package = "proto/gen/go";
+
+message Token {
+  string t = 1;
+}
+
+service ControlService {
+  rpc Callback(Token) returns (stream Token);
+}
