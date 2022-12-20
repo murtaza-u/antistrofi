@@ -5,8 +5,8 @@ import "time"
 // Stream is an interface that wraps the Send method. All GRPC service
 // streams satisfy this interface.
 type Stream interface {
-	// Send sends a message across the stream
-	Send(any) error
+	// SendMsg sends a message across the stream
+	SendMsg(any) error
 }
 
 type ping struct {
@@ -14,8 +14,8 @@ type ping struct {
 	stop chan struct{}
 }
 
-// NewPing instantiates a new ping instance from the provided config.
-func NewPing(cfg *Cfg) *ping {
+// New instantiates a new ping instance from the provided config.
+func New(cfg *Cfg) *ping {
 	if cfg == nil {
 		cfg = new(Cfg)
 	}
@@ -60,7 +60,7 @@ func (p *ping) Start(s Stream, obj any) error {
 }
 
 func (ping) send(s Stream, obj any) error {
-	return s.Send(obj)
+	return s.SendMsg(obj)
 }
 
 func (p *ping) wait(t *time.Ticker) bool {
