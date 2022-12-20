@@ -30,7 +30,9 @@ func New(cfg *Cfg) *ping {
 	}
 }
 
-// Stop terminates the pings and forces the *ping.Start method to return
+// Stop terminates the pings and forces the *ping.Start method to
+// return. Do *not* call this method unless you are absolutely sure that
+// pings are still active.
 func (p *ping) Stop() {
 	p.stop <- struct{}{}
 }
@@ -66,6 +68,7 @@ func (ping) send(s Stream, obj any) error {
 func (p *ping) wait(t *time.Ticker) bool {
 	select {
 	case <-p.stop:
+		close(p.stop)
 		return false
 	case <-t.C:
 		return true
