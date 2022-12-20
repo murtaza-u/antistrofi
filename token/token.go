@@ -11,7 +11,7 @@ import (
 var (
 	// DefaultExpiry is the default token expiration time if nothing is
 	// provided.
-	DefaultExpiry = time.Now().Add(time.Minute * 15)
+	DefaultExpiry = time.Now().Add(time.Minute * 5)
 
 	ErrInvalidNB        = errors.New("expiry cannot be shorter than NB")
 	ErrMissingBody      = errors.New("missing body in params")
@@ -55,7 +55,7 @@ func NewToken(p Params) (*token, error) {
 	err := p.validate()
 	if err != nil {
 		return nil, fmt.Errorf(
-			"failed to validate token: %s", err.Error(),
+			"failed to validate params: %s", err.Error(),
 		)
 	}
 
