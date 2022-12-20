@@ -6,6 +6,8 @@ message Token {
   string t = 1;
 }
 
-service ControlService {
-  rpc Callback(Token) returns (stream Token);
+message Void {}
+
+service Control {
+  rpc Callback(Void) returns (stream Token);
 }
