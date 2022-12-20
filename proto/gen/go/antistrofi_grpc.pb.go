@@ -18,28 +18,27 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ControlServiceClient is the client API for ControlService service.
+// ControlClient is the client API for Control service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ControlServiceClient interface {
-	Callback(ctx context.Context, in *Token, opts ...grpc.CallOption) (ControlService_CallbackClient, error)
-	Refresh(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Token, error)
+type ControlClient interface {
+	Callback(ctx context.Context, in *Void, opts ...grpc.CallOption) (Control_CallbackClient, error)
 }
 
-type controlServiceClient struct {
+type controlClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewControlServiceClient(cc grpc.ClientConnInterface) ControlServiceClient {
-	return &controlServiceClient{cc}
+func NewControlClient(cc grpc.ClientConnInterface) ControlClient {
+	return &controlClient{cc}
 }
 
-func (c *controlServiceClient) Callback(ctx context.Context, in *Token, opts ...grpc.CallOption) (ControlService_CallbackClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ControlService_ServiceDesc.Streams[0], "/ControlService/Callback", opts...)
+func (c *controlClient) Callback(ctx context.Context, in *Void, opts ...grpc.CallOption) (Control_CallbackClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Control_ServiceDesc.Streams[0], "/Control/Callback", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &controlServiceCallbackClient{stream}
+	x := &controlCallbackClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -49,16 +48,16 @@ func (c *controlServiceClient) Callback(ctx context.Context, in *Token, opts ...
 	return x, nil
 }
 
-type ControlService_CallbackClient interface {
+type Control_CallbackClient interface {
 	Recv() (*Token, error)
 	grpc.ClientStream
 }
 
-type controlServiceCallbackClient struct {
+type controlCallbackClient struct {
 	grpc.ClientStream
 }
 
-func (x *controlServiceCallbackClient) Recv() (*Token, error) {
+func (x *controlCallbackClient) Recv() (*Token, error) {
 	m := new(Token)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -66,102 +65,66 @@ func (x *controlServiceCallbackClient) Recv() (*Token, error) {
 	return m, nil
 }
 
-func (c *controlServiceClient) Refresh(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
-	err := c.cc.Invoke(ctx, "/ControlService/Refresh", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// ControlServiceServer is the server API for ControlService service.
-// All implementations must embed UnimplementedControlServiceServer
+// ControlServer is the server API for Control service.
+// All implementations must embed UnimplementedControlServer
 // for forward compatibility
-type ControlServiceServer interface {
-	Callback(*Token, ControlService_CallbackServer) error
-	Refresh(context.Context, *Token) (*Token, error)
-	mustEmbedUnimplementedControlServiceServer()
+type ControlServer interface {
+	Callback(*Void, Control_CallbackServer) error
+	mustEmbedUnimplementedControlServer()
 }
 
-// UnimplementedControlServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedControlServiceServer struct {
+// UnimplementedControlServer must be embedded to have forward compatible implementations.
+type UnimplementedControlServer struct {
 }
 
-func (UnimplementedControlServiceServer) Callback(*Token, ControlService_CallbackServer) error {
+func (UnimplementedControlServer) Callback(*Void, Control_CallbackServer) error {
 	return status.Errorf(codes.Unimplemented, "method Callback not implemented")
 }
-func (UnimplementedControlServiceServer) Refresh(context.Context, *Token) (*Token, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Refresh not implemented")
-}
-func (UnimplementedControlServiceServer) mustEmbedUnimplementedControlServiceServer() {}
+func (UnimplementedControlServer) mustEmbedUnimplementedControlServer() {}
 
-// UnsafeControlServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ControlServiceServer will
+// UnsafeControlServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ControlServer will
 // result in compilation errors.
-type UnsafeControlServiceServer interface {
-	mustEmbedUnimplementedControlServiceServer()
+type UnsafeControlServer interface {
+	mustEmbedUnimplementedControlServer()
 }
 
-func RegisterControlServiceServer(s grpc.ServiceRegistrar, srv ControlServiceServer) {
-	s.RegisterService(&ControlService_ServiceDesc, srv)
+func RegisterControlServer(s grpc.ServiceRegistrar, srv ControlServer) {
+	s.RegisterService(&Control_ServiceDesc, srv)
 }
 
-func _ControlService_Callback_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Token)
+func _Control_Callback_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Void)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ControlServiceServer).Callback(m, &controlServiceCallbackServer{stream})
+	return srv.(ControlServer).Callback(m, &controlCallbackServer{stream})
 }
 
-type ControlService_CallbackServer interface {
+type Control_CallbackServer interface {
 	Send(*Token) error
 	grpc.ServerStream
 }
 
-type controlServiceCallbackServer struct {
+type controlCallbackServer struct {
 	grpc.ServerStream
 }
 
-func (x *controlServiceCallbackServer) Send(m *Token) error {
+func (x *controlCallbackServer) Send(m *Token) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _ControlService_Refresh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Token)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ControlServiceServer).Refresh(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ControlService/Refresh",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ControlServiceServer).Refresh(ctx, req.(*Token))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// ControlService_ServiceDesc is the grpc.ServiceDesc for ControlService service.
+// Control_ServiceDesc is the grpc.ServiceDesc for Control service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ControlService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ControlService",
-	HandlerType: (*ControlServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Refresh",
-			Handler:    _ControlService_Refresh_Handler,
-		},
-	},
+var Control_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "Control",
+	HandlerType: (*ControlServer)(nil),
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Callback",
-			Handler:       _ControlService_Callback_Handler,
+			Handler:       _Control_Callback_Handler,
 			ServerStreams: true,
 		},
 	},

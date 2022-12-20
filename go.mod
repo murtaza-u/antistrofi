@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	aidanwoods.dev/go-paseto v1.1.3
+	github.com/google/uuid v1.3.0
 	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.1
 )
