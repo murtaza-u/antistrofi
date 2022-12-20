@@ -8,14 +8,14 @@ import (
 	"github.com/murtaza-u/antistrofi/token"
 )
 
-func TestNewToken(t *testing.T) {
+func TestNew(t *testing.T) {
 	body := make(map[string]any)
 	body["foo"] = "bar"
 
 	var err error
 
 	// invalid `nbf` field
-	_, err = token.NewToken(token.Params{
+	_, err = token.New(token.Params{
 		Body:      body,
 		Expiry:    time.Now().Add(time.Minute * 5),
 		NotBefore: time.Now().Add(time.Minute * 10),
@@ -28,7 +28,7 @@ func TestNewToken(t *testing.T) {
 	}
 
 	// body = nil
-	_, err = token.NewToken(token.Params{
+	_, err = token.New(token.Params{
 		Body: nil,
 	})
 	if err != token.ErrMissingBody {
@@ -39,7 +39,7 @@ func TestNewToken(t *testing.T) {
 	}
 
 	// body = empty map
-	_, err = token.NewToken(token.Params{
+	_, err = token.New(token.Params{
 		Body: make(map[string]any),
 	})
 	if err != token.ErrMissingBody {
@@ -50,7 +50,7 @@ func TestNewToken(t *testing.T) {
 	}
 
 	// no errors
-	_, err = token.NewToken(token.Params{
+	_, err = token.New(token.Params{
 		Body: body,
 	})
 	if err != nil {
@@ -65,7 +65,7 @@ func TestEncrypt(t *testing.T) {
 		Body: map[string]any{"foo": "bar"},
 	}
 
-	tkn, err := token.NewToken(p)
+	tkn, err := token.New(p)
 	if err != nil {
 		t.Errorf("NewToken: %s", err.Error())
 	}
@@ -91,7 +91,7 @@ func TestIsExpired(t *testing.T) {
 		Body:   map[string]any{"foo": "bar"},
 	}
 
-	tkn, err := token.NewToken(p)
+	tkn, err := token.New(p)
 	if err != nil {
 		t.Errorf("NewToken: %s", err.Error())
 	}
@@ -109,7 +109,7 @@ func TestRefresh(t *testing.T) {
 		Body:   map[string]any{"foo": "bar"},
 	}
 
-	tkn, err := token.NewToken(p)
+	tkn, err := token.New(p)
 	if err != nil {
 		t.Errorf("NewToken: %s", err.Error())
 	}

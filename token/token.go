@@ -50,8 +50,8 @@ type token struct {
 	paseto.Token
 }
 
-// NewToken returns a new paseto token from the provided parameters.
-func NewToken(p Params) (*token, error) {
+// New returns a new paseto token from the provided parameters.
+func New(p Params) (*token, error) {
 	err := p.validate()
 	if err != nil {
 		return nil, err

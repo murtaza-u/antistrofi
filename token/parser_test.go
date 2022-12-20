@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetFooter(t *testing.T) {
-	tkn, err := token.NewToken(token.Params{
+	tkn, err := token.New(token.Params{
 		Body:   map[string]any{"foo": "bar"},
 		Footer: "blah",
 	})
@@ -33,7 +33,7 @@ func TestGetFooter(t *testing.T) {
 }
 
 func TestDecrypt(t *testing.T) {
-	tkn, err := token.NewToken(token.Params{
+	tkn, err := token.New(token.Params{
 		Body: map[string]any{"foo": "bar"},
 	})
 	if err != nil {
