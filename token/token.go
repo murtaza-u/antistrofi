@@ -50,18 +50,17 @@ type token struct {
 	paseto.Token
 }
 
-// NewToken returns a new paseto token from the provided parameters.
-func NewToken(p Params) (*token, error) {
+// New returns a new paseto token from the provided parameters.
+func New(p Params) (*token, error) {
 	err := p.validate()
 	if err != nil {
-		return nil, fmt.Errorf(
-			"failed to validate params: %s", err.Error(),
-		)
+		return nil, err
 	}
 
 	t := new(token)
 	t.Token = paseto.NewToken()
 	t.SetExpiration(p.Expiry)
+	t.SetIssuedAt(time.Now())
 	t.SetNotBefore(p.NotBefore)
 	t.SetIssuer(p.Issuer)
 	t.SetAudience(p.Audience)

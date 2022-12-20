@@ -87,7 +87,7 @@ func (s *service) newToken(
 			"id":   id,
 		},
 	}
-	t, err := token.NewToken(p)
+	t, err := token.New(p)
 	if err != nil {
 		return nil, fmt.Errorf(
 			"failed to create new token: %s",
